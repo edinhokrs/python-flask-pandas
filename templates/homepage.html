@@ -8,8 +8,8 @@
         /* Estilização Global */
         body {
             font-family: Arial, sans-serif;
-            background-color: #111;
-            color: white;
+            background-color: white;  /* Fundo branco */
+            color: #007BFF;  /* Texto azul */
             margin: 0;
             padding: 0;
             height: 100vh;
@@ -21,9 +21,9 @@
 
         /* Menu */
         nav {
-            background-color: #1E1E1E;
+            background-color: white;  /* Menu com fundo branco */
             display: flex;
-            justify-content: center;
+            justify-content: center;  /* Menu centralizado */
             align-items: center;
             padding: 15px;
             position: absolute;
@@ -31,10 +31,20 @@
             left: 50%;
             transform: translateX(-50%);  /* Centraliza horizontalmente */
             border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra leve para o menu */
+        }
+
+        /* Logo */
+        .logo {
+            position: absolute;
+            left: 20px;  /* Logo fixada à esquerda */
+            top: 20px;   /* Logo fixada 20px abaixo do topo */
+            width: 250px;  /* Largura do logo */
+            height: 100px; /* Altura do logo */
         }
 
         nav a {
-            color: #00BFFF;
+            color: #007BFF;  /* Texto azul para os links */
             text-decoration: none;
             font-size: 18px;
             margin: 0 20px;
@@ -42,8 +52,8 @@
         }
 
         nav a:hover {
-            color: #007BFF;
-            background-color: #333;
+            color: #00BFFF;  /* Azul mais claro quando passa o mouse */
+            background-color: #f0f0f0;  /* Fundo claro ao passar o mouse */
             border-radius: 5px;
         }
 
@@ -55,7 +65,7 @@
 
         /* Título */
         h1 {
-            color: #007BFF;
+            color: #007BFF;  /* Cor do título em azul */
         }
 
         /* Responsividade */
@@ -72,6 +82,9 @@
     </style>
 </head>
 <body>
+
+    <!-- Logo -->
+    <img src="{{ url_for('static', filename='logo.webp') }}" alt="Logo" class="logo">
 
     <!-- Menu de Navegação -->
     <nav>
