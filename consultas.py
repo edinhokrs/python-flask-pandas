@@ -7,15 +7,13 @@ app = Flask(__name__)
 dados_df = pd.read_csv('./analise-vendas.csv')
 
 # Criar página do site
-# 1- Route 
-# 2- Função
-# 3- Template
 @app.route('/')
 def home():
     return render_template('homepage.html')
 
 @app.route('/consulta', methods=['GET', 'POST'])
 def consulta():
+    colunas = list(dados_df.columns)  # Obtém as colunas disponíveis
     if request.method == 'POST':
         campo = request.form['campo']
         valor = request.form['valor']
@@ -42,7 +40,7 @@ def consulta():
                     print(f"O valor deve ser decimal")
 
             # Filtrar os dados
-            cliente_info = dados_df[dados_df[campo] == valor] # Retorna o valor de todos os campos
+            cliente_info = dados_df[dados_df[campo] == valor]  # Retorna o valor de todos os campos
             if not cliente_info.empty:
                 return render_template('resultado.html', cliente_info=cliente_info)
             else:
@@ -50,8 +48,7 @@ def consulta():
         else:
             return f"Campo '{campo}' não encontrado no arquivo."
 
-    return render_template('consulta.html')
+    return render_template('consulta.html', colunas=colunas)
 
-if __name__ == '__main__': # é usada para garantir que um trecho de código seja executado apenas quando o script for executado diretamente, e não quando ele for importado como um módulo em outro script 
+if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
-
