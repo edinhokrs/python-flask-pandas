@@ -1,50 +1,44 @@
 from flask import Flask, render_template, request
 import pandas as pd
 
-app = Flask(__name__) 
+app = Flask(__name__)
 
-# Carregar o DataFrame de exemplo (substitua com o seu arquivo CSV)
+# Carregar o DataFrame
 dados_df = pd.read_csv('./analise-vendas.csv')
 
-# Casting, transformar campos que constam como object em float
-campos_casting = ['Total de Nota Fiscal de Saída', 'Lucro bruto', 'Total de NS em aberto'] # Selecionando campos
-for casting in campos_casting: # Transformando
-    dados_df[casting] = dados_df[casting].replace({r'R\$ ': '', r'\.': '', ',': '.'}, regex=True).astype(float)
+# Casting dos campos
+campos_casting = ['Total de Nota Fiscal de Saída', 'Lucro bruto', 'Total de NS em aberto']
+for campo in campos_casting:
+    dados_df[campo] = dados_df[campo].replace({r'R\$ ': '', r'\.': '', ',': '.'}, regex=True).astype(float)
 
-# Criar página do site
+def validar_valor(campo, valor):
+    try:
+        if campo in ["#", "Nota Fiscal de Saída"]:
+            return int(valor)
+        elif campo in ['% de lucro bruto', 'Total de Nota Fiscal de Saída', 'Lucro bruto', 'Total de NS em aberto']:
+            return float(valor)
+    except ValueError:
+        return f"O valor para '{campo}' deve ser do tipo correto."
+    return valor
+
 @app.route('/')
 def home():
     return render_template('homepage.html')
 
 @app.route('/consulta', methods=['GET', 'POST'])
 def consulta():
-    colunas = list(dados_df.columns)  # Obtém as colunas disponíveis
+    colunas = list(dados_df.columns)
     if request.method == 'POST':
         campo = request.form['campo']
         valor = request.form['valor']
-        
-        if campo in dados_df.columns:
-            # Verifique se o valor é numérico para campos específicos
-            if campo in ["#", "Nota Fiscal de Saída"]:
-                try:
-                    valor = int(valor)
-                except ValueError:
-                    return f"O valor para '{campo}' deve ser numérico."
-            
-            if campo in '% de lucro bruto':
-                try:
-                    valor = float(valor)
-                except ValueError:
-                    return f"O valor para {campo} deve ser decimal"
-                
-            if campo in ['Total de Nota Fiscal de Saída', 'Lucro bruto', 'Total de NS em aberto']:
-                try:
-                    valor = float(valor)
-                except ValueError:
-                    print(f"O valor deve ser decimal")
 
-            # Filtrar os dados
-            cliente_info = dados_df[dados_df[campo] == valor]  # Retorna o valor de todos os campos
+        if campo in dados_df.columns:
+            valor_validado = validar_valor(campo, valor)
+            if isinstance(valor_validado, str):  # Retorna mensagem de erro
+                return valor_validado
+
+            valor = valor_validado
+            cliente_info = dados_df[dados_df[campo] == valor]
             if not cliente_info.empty:
                 return render_template('resultado.html', cliente_info=cliente_info)
             else:
