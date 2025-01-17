@@ -6,6 +6,11 @@ app = Flask(__name__)
 # Carregar o DataFrame de exemplo (substitua com o seu arquivo CSV)
 dados_df = pd.read_csv('./analise-vendas.csv')
 
+# Casting, transformar campos que constam como object em float
+campos_casting = ['Total de Nota Fiscal de Saída', 'Lucro bruto', 'Total de NS em aberto'] # Selecionando campos
+for casting in campos_casting: # Transformando
+    dados_df[casting] = dados_df[casting].replace({r'R\$ ': '', r'\.': '', ',': '.'}, regex=True).astype(float)
+
 # Criar página do site
 @app.route('/')
 def home():
@@ -35,7 +40,6 @@ def consulta():
             if campo in ['Total de Nota Fiscal de Saída', 'Lucro bruto', 'Total de NS em aberto']:
                 try:
                     valor = float(valor)
-                    dados_df[campo] = dados_df[campo].replace({r'R\$ ': '', r'\.': '', ',': '.'}, regex=True).astype(float)
                 except ValueError:
                     print(f"O valor deve ser decimal")
 
