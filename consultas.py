@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, Response, session
+from flask import Flask, render_template, request, Response, session, redirect, url_for
 import pdfkit # Lib para gerar o PDF
 import pandas as pd
 
@@ -33,7 +33,7 @@ def home():
 
 @app.route('/consulta', methods=['GET', 'POST'])
 def consulta():
-    colunas = list(dados_df.columns)
+    colunas = list(dados_df.columns) # Utilizado no consulta.html para mostrar dinamicamente quais os campos presentes no CSV
     if request.method == 'POST':
         campo = request.form['campo']
         valor = request.form['valor']
@@ -49,13 +49,24 @@ def consulta():
             session['cliente_info'] = cliente_info.to_dict(orient='records')  # Armazenando em formato de dicionário
 
             if not cliente_info.empty:
-                return render_template('resultado.html', cliente_info=cliente_info)
+                return redirect(url_for('resultado'))
             else:
                 return f"Nenhum registro encontrado para o campo '{campo}' com o valor '{valor}'."
         else:
             return f"Campo '{campo}' não encontrado no arquivo."
 
     return render_template('consulta.html', colunas=colunas)
+
+@app.route('/resultado')
+def resultado():
+    # Recuperando os dados da sessão
+    cliente_info = session.get('cliente_info', None)
+    cliente_info_df = pd.DataFrame(cliente_info)
+
+    if cliente_info:
+        return render_template('resultado.html', cliente_info=cliente_info_df)
+    else:
+        return "Nenhum dado encontrado para exibir."
 
 @app.route('/para_pdf', methods=['POST'])
 def route_pdf():
@@ -64,7 +75,7 @@ def route_pdf():
     if not cliente_info:
         return "Erro: Nenhuma consulta encontrada para gerar o PDF."
 
-    out = render_template("tabela_pdf.html", cliente_info=cliente_info) # Renderiza a página HTML com os dados reais de cliente_info
+    out = render_template("tabela_pdf.html", cliente_info=cliente_info) # Gera a página HTML contendo a tabela com os dados reais de cliente_info
 
     options = {
         "orientation": "landscape",
