@@ -6,6 +6,11 @@ app = Flask(__name__)
 # Carregar o DataFrame de exemplo (substitua com o seu arquivo CSV)
 dados_df = pd.read_csv('./analise-vendas.csv')
 
+campos_casting = ['Total de Nota Fiscal de Saída', 'Lucro bruto', 'Total de NS em aberto']
+
+for casting in campos_casting:
+    dados_df[casting] = dados_df[casting].replace({r'R\$ ': '', r'\.': '', ',': '.'}, regex=True).astype(float)
+
 # Criar página do site
 # 1- Route 
 # 2- Função
@@ -37,9 +42,8 @@ def consulta():
             if campo in ['Total de Nota Fiscal de Saída', 'Lucro bruto', 'Total de NS em aberto']:
                 try:
                     valor = float(valor)
-                    dados_df[campo] = dados_df[campo].replace({r'R\$ ': '', r'\.': '', ',': '.'}, regex=True).astype(float)
                 except ValueError:
-                    print(f"O valor deve ser decimal")
+                    return f"O valor deve ser decimal"
 
             # Filtrar os dados
             cliente_info = dados_df[dados_df[campo] == valor] # Retorna o valor de todos os campos
@@ -54,4 +58,3 @@ def consulta():
 
 if __name__ == '__main__': # é usada para garantir que um trecho de código seja executado apenas quando o script for executado diretamente, e não quando ele for importado como um módulo em outro script 
     app.run(host='0.0.0.0', port=5000, debug=True)
-
