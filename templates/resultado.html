@@ -5,42 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resultado da Consulta</title>
     <style>
-        /* Estilização do layout */
+        /* Estilização geral */
         body {
             font-family: Arial, sans-serif;
-            background-color: #111;
-            color: white;
+            background-color: #121212;
+            color: #ffffff;
             margin: 0;
             padding: 0;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
+            min-height: 100vh;
         }
 
         /* Menu de navegação */
         header {
             background-color: #1E1E1E;
-            padding: 15px;
+            width: 100%;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        header nav {
             display: flex;
             justify-content: center;
-            align-items: center;
         }
 
         header a {
             color: #00BFFF;
             text-decoration: none;
             font-size: 18px;
-            margin: 0 20px;
+            margin: 0 15px;
+            transition: color 0.3s ease;
         }
 
-        /* Tabela de resultados */
+        header a:hover {
+            color: #1E90FF;
+        }
+
+        /* Container de resultados */
         .container {
-            margin-top: 80px;
+            margin: 40px auto;
             padding: 20px;
+            max-width: 90%;
+            background-color: #1C1C1C;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
             text-align: center;
         }
 
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #00BFFF;
+        }
+
+        /* Tabela de resultados */
         table {
             width: 100%;
             margin-top: 20px;
@@ -49,13 +72,48 @@
         }
 
         table th, table td {
-            padding: 10px;
+            padding: 12px;
             text-align: left;
             border: 1px solid #444;
         }
 
         table th {
+            background-color: #2E2E2E;
+            color: #00BFFF;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #2A2A2A;
+        }
+
+        table tr:hover {
             background-color: #333;
+        }
+
+        table td {
+            word-break: break-word;
+        }
+
+        /* Mensagem de erro */
+        .message {
+            font-size: 18px;
+            color: #FF6347;
+        }
+
+        /* Estilização do botão */
+        .btn {
+            padding: 10px 20px;
+            background-color: #00BFFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background-color: #1E90FF;
         }
 
     </style>
@@ -64,16 +122,18 @@
 
     <!-- Menu de Navegação -->
     <header>
-        <a href="/">Home</a>
-        <a href="/consulta">Consulta</a>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/consulta">Consulta</a>
+        </nav>
     </header>
 
-    <!-- Conteúdo da Página de Resultado -->
+    <!-- Conteúdo da Página -->
     <div class="container">
         <h1>Resultado da Consulta</h1>
 
         {% if cliente_info.empty %}
-            <p>Nenhum resultado encontrado para a consulta.</p>
+            <p class="message">Nenhum resultado encontrado para a consulta.</p>
         {% else %}
             <table>
                 <thead>
@@ -84,7 +144,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for index, row in cliente_info.iterrows() %}
+                    {% for _, row in cliente_info.iterrows() %}
                         <tr>
                             {% for col in cliente_info.columns %}
                                 <td>{{ row[col] }}</td>
@@ -93,6 +153,11 @@
                     {% endfor %}
                 </tbody>
             </table>
+
+            <!-- Formulário para Gerar o PDF -->
+            <form action="/para_pdf" method="POST">
+                <button class="btn" type="submit">Gerar PDF</button>
+            </form>
         {% endif %}
     </div>
 

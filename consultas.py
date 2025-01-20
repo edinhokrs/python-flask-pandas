@@ -1,7 +1,10 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, Response, session
+import pdfkit # Lib para gerar o PDF
 import pandas as pd
 
 app = Flask(__name__)
+
+app.secret_key = 'secret_key' # Armazenar sessão, para que o cliente_info seja passado na rota para_pdf
 
 # Carregar o DataFrame
 dados_df = pd.read_csv('./analise-vendas.csv')
@@ -18,7 +21,10 @@ def validar_valor(campo, valor):
         elif campo in ['% de lucro bruto', 'Total de Nota Fiscal de Saída', 'Lucro bruto', 'Total de NS em aberto']:
             return float(valor)
     except ValueError:
-        return f"O valor para '{campo}' deve ser do tipo correto."
+        if campo in ["#", "Nota Fiscal de Saída"]:
+            return f"O valor do {campo} deve ser algum número inteiro."
+        if campo in ['% de lucro bruto', 'Total de Nota Fiscal de Saída', 'Lucro bruto', 'Total de NS em aberto']:
+            return f"O valor do {campo} deve ser algum número decimal."
     return valor
 
 @app.route('/')
@@ -34,11 +40,14 @@ def consulta():
 
         if campo in dados_df.columns:
             valor_validado = validar_valor(campo, valor)
-            if isinstance(valor_validado, str):  # Retorna mensagem de erro
+            if isinstance(valor_validado, str):  # Retorna mensagem de erro, pois a função validar_campo retorna o erro caso seja Str
                 return valor_validado
 
             valor = valor_validado
             cliente_info = dados_df[dados_df[campo] == valor]
+
+            session['cliente_info'] = cliente_info.to_dict(orient='records')  # Armazenando em formato de dicionário
+
             if not cliente_info.empty:
                 return render_template('resultado.html', cliente_info=cliente_info)
             else:
@@ -47,6 +56,32 @@ def consulta():
             return f"Campo '{campo}' não encontrado no arquivo."
 
     return render_template('consulta.html', colunas=colunas)
+
+@app.route('/para_pdf', methods=['POST'])
+def route_pdf():
+    cliente_info = session.get('cliente_info', None) # Recuperando os dados da consulta encontrada para gerar PDF
+
+    if not cliente_info:
+        return "Erro: Nenhuma consulta encontrada para gerar o PDF."
+
+    out = render_template("tabela_pdf.html", cliente_info=cliente_info) # Renderiza a página HTML com os dados reais de cliente_info
+
+    options = {
+        "orientation": "landscape",
+        "page-size": "A4",
+        "margin-top": "1.0cm",
+        "margin-right": "1.0cm",
+        "margin-bottom": "1.0cm",
+        "margin-left": "1.0cm",
+        "encoding": "UTF-8",
+    }
+
+    pdf = pdfkit.from_string(out, options=options) # Gerar PDF a partir do conteúdo HTML
+
+    response = Response(pdf, mimetype="application/pdf")
+    response.headers["Content-Disposition"] = "attachment; filename=tabela.pdf" # Configura o cabeçalho para forçar o Download do PDF
+
+    return response
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
