@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filtrar Vendas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendas.css') }}">
+</head>
+<body>
+
+    <!-- Logo -->
+    <img src="{{ url_for('static', filename='logo.webp') }}" alt="Logo" class="logo">
+
+    <!-- Menu de Navegação -->
+    <nav>
+        <a href="/">Home</a>
+        <div class="dropdown">
+            <a href="#">Relatórios</a>
+            <div class="dropdown-content">
+                <a href="/vendas">Vendas 10/01/2025</a>
+                <a href="/ordem_servico">Ordem de serviço</a>
+                <a href="/compras_10_01_2025">Compras 10/01/2025</a>
+                <a href="/compras_16_01_2025">Compras 16/01/2025</a>
+                <a href="/num_serie">Número de série 27/01/2025</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Container Principal -->
+    <div class="container">
+        <h1>Filtrar Vendas</h1>
+        <form method="POST" action="/vendas" class="form-container">
+            <label for="campo">Campo da planilha:</label>
+            <select name="campo" id="campo">
+                {% for coluna in colunas %}
+                    <option value="{{ coluna }}">{{ coluna }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="valor">Valor:</label>
+            <input type="text" name="valor" id="valor">
+
+            <label for="campo_data">Filtrar por data:</label>
+            <select name="campo_data" id="campo_data">
+                {% for campo in filtrar_data_vendas %}
+                    <option value="{{ campo }}">{{ campo }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="data_inicio">Data Início:</label>
+            <input type="date" name="data_inicio" id="data_inicio">
+
+            <label for="data_fim">Data Fim:</label>
+            <input type="date" name="data_fim" id="data_fim">
+
+            <button type="submit">Filtrar</button>
+
+        </form>
+    </div>
+
+</body>
+</html>

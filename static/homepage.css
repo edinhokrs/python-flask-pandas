@@ -1,0 +1,105 @@
+/* Estilização Global */
+body {
+    font-family: Arial, sans-serif;
+    background-color: white;  /* Fundo branco */
+    color: #007BFF;  /* Texto azul */
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Menu */
+nav {
+    background-color: white;  /* Menu com fundo branco */
+    display: flex;
+    justify-content: center;  /* Menu centralizado */
+    align-items: center;
+    padding: 15px;
+    position: absolute;
+    top: 20px;  /* Menu fica 20px abaixo do topo */
+    left: 50%;
+    transform: translateX(-50%);  /* Centraliza horizontalmente */
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra leve para o menu */
+}
+
+/* Logo */
+.logo {
+    position: absolute;
+    left: 20px;  /* Logo fixada à esquerda */
+    top: 20px;   /* Logo fixada 20px abaixo do topo */
+    width: 250px;  /* Largura do logo */
+    height: 100px; /* Altura do logo */
+}
+
+nav a {
+    color: #007BFF;  /* Texto azul para os links */
+    text-decoration: none;
+    font-size: 18px;
+    margin: 0 20px;
+    padding: 10px;
+}
+
+nav a:hover { /* 'nav' é o menu, 'a' as ancoras e hover o tipo de efeito */
+    color: #00BFFF;  /* Azul mais claro quando passa o mouse */
+    background-color: #f0f0f0;  /* Fundo claro ao passar o mouse */
+    border-radius: 5px;
+}
+
+/* Dropdown Menu */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 160px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra leve */
+    border-radius: 5px;
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: #007BFF;
+    padding: 10px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #f0f0f0;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Container principal */
+.container {
+    text-align: center;
+    margin-top: 100px;  /* Garante que o conteúdo abaixo do menu não fique colado */
+}
+
+/* Título */
+h1 {
+    color: #007BFF;  /* Cor do título em azul */
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+    nav {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    nav a {
+        margin: 10px 0;
+    }
+}

@@ -1,0 +1,107 @@
+/* Estilo Geral */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f7fa;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* Cabeçalho */
+h1 {
+    background-color: #007bff; /* Azul principal */
+    color: white;
+    padding: 15px 0;
+    text-align: center;
+    margin: 0;
+}
+
+/* Formulário */
+form {
+    background-color: white;
+    padding: 20px;
+    margin: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Label e Input */
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+}
+
+input[type="text"],
+input[type="date"],
+select {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0 15px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+/* Campos de Data */
+input[type="date"] {
+    max-width: 180px;
+    display: inline-block;
+}
+
+/* Botão */
+button {
+    background-color: #007bff; /* Azul do botão */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #0056b3; /* Azul mais escuro no hover */
+}
+
+/* Estilo para o Select */
+select {
+    font-size: 14px;
+}
+
+/* Estilo de containers */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Organizando os campos de data lado a lado */
+#data_inicio,
+#data_fim {
+    display: inline-block;
+    width: 45%;
+    margin-right: 5%;
+}
+
+#data_fim {
+    margin-right: 0;
+}
+
+/* Melhorando o layout dos campos de filtro */
+select,
+input[type="text"] {
+    width: 45%;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+input[type="text"] {
+    width: 30%;
+}
+
+form div {
+    margin-bottom: 10px;
+}

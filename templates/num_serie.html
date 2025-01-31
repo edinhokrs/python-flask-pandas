@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório - Número de Série</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='num_serie.css') }}">
+</head>
+<body>
+
+    <!-- Logo -->
+    <img src="{{ url_for('static', filename='logo.webp') }}" alt="Logo" class="logo">
+
+    <!-- Menu de Navegação -->
+    <nav>
+        <a href="/">Home</a>
+        <div class="dropdown">
+            <a href="#">Relatórios</a>
+            <div class="dropdown-content">
+                <a href="/vendas">Vendas 10/01/2025</a>
+                <a href="/ordem_servico">Ordem de serviço</a>
+                <a href="/compras_10_01_2025">Compras 10/01/2025</a>
+                <a href="/compras_16_01_2025">Compras 16/01/2025</a>
+                <a href="/num_serie">Número de série 27/01/2025</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Formulário -->
+    <div class="form-container">
+        <h1>Relatório - Número de Série</h1>
+        <form action="/num_serie" method="POST">
+            <!-- Campo Select para as colunas -->
+            <label for="campo">Selecione o campo:</label>
+            <select name="campo" id="campo" required>
+                <option value="" disabled selected>Escolha um campo</option>
+                {% for coluna in colunas %}
+                    <option value="{{ coluna }}">{{ coluna }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- Campo de input para o valor -->
+            <label for="valor">Insira o valor:</label>
+            <input type="text" name="valor" id="valor" placeholder="Digite o valor..." required>
+
+            <!-- Botão de enviar -->
+            <button type="submit">Filtrar</button>
+        </form>
+    </div>
+
+</body>
+</html>

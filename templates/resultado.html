@@ -4,95 +4,93 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resultado da Consulta</title>
-    <style>
-        /* Estilização do layout */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #111;
-            color: white;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* Menu de navegação */
-        header {
-            background-color: #1E1E1E;
-            padding: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        header a {
-            color: #00BFFF;
-            text-decoration: none;
-            font-size: 18px;
-            margin: 0 20px;
-        }
-
-        /* Tabela de resultados */
-        .container {
-            margin-top: 80px;
-            padding: 20px;
-            text-align: center;
-        }
-
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-            color: white;
-        }
-
-        table th, table td {
-            padding: 10px;
-            text-align: left;
-            border: 1px solid #444;
-        }
-
-        table th {
-            background-color: #333;
-        }
-
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='resultado.css') }}">
 </head>
 <body>
 
+    <!-- Logo -->
+    <img src="{{ url_for('static', filename='logo.webp') }}" alt="Logo" class="logo">
+
     <!-- Menu de Navegação -->
-    <header>
+    <nav>
         <a href="/">Home</a>
-        <a href="/consulta">Consulta</a>
-    </header>
+        <div class="dropdown">
+            <a href="#">Relatórios</a>
+            <div class="dropdown-content">
+                <a href="/vendas">Vendas 10/01/2025</a>
+                <a href="/ordem_servico">Ordem de serviço</a>
+                <a href="/compras_10_01_2025">Compras 10/01/2025</a>
+                <a href="/compras_16_01_2025">Compras 16/01/2025</a>
+                <a href="/num_serie">Número de série 27/01/2025</a>
+            </div>
+        </div>
+    </nav>
 
     <!-- Conteúdo da Página de Resultado -->
     <div class="container">
         <h1>Resultado da Consulta</h1>
 
-        {% if cliente_info.empty %}
-            <p>Nenhum resultado encontrado para a consulta.</p>
-        {% else %}
-            <table>
-                <thead>
-                    <tr>
-                        {% for col in cliente_info.columns %}
-                            <th>{{ col }}</th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for index, row in cliente_info.iterrows() %}
-                        <tr>
-                            {% for col in cliente_info.columns %}
-                                <td>{{ row[col] }}</td>
-                            {% endfor %}
-                        </tr>
+        {% if cliente_info is not none and cliente_info|length > 0 %}
+        <table>
+            <thead>
+                <tr>
+                    {% if session['origem'] == 'vendas' %}
+                    <!-- Colunas para Vendas -->
+                    {% set colunas_ordem = [
+                        '#', 'Nº do documento', 'Cancelado', 'Data de lançamento', 'Data de vencimento',
+                        'Código do cliente/fornecedor', 'Nome do cliente/fornecedor', 'Endereço de cobrança', 
+                        'Nº do item', 'Descrição do item/serviço', 'Quantidade', 'Linha da data de entrega',
+                         'Moeda do preço', 'Total da linha', 'Total da linha (ME)'
+                    ] %}
+                    {% elif session['origem'] == 'ordem_servico' %}
+                    <!-- Colunas para Ordem de Serviço -->
+                    {% set colunas_ordem = [
+                        '#', 'Código do parceiro de negócios', 'Nome do parceiro de negócios', 'Nº do contrato',
+                        'Data final do contrato', 'Data de criação', 'Data de encerramento', 'Data de resolução', 
+                        'Data da resposta', 'Descrição do item', 'Origem', 'Prioridade', 'Tipo de chamado', 
+                        'Tipo problema', 'Série', 'Nome do endereço', 'Tipo de logradouro', 'Telefone', 
+                        'Código de destinatário PN', 'Endereço de entrega de PN', 'Código da fatura de PN', 
+                        'Endereço da fatura de PN', 'E-mail do parceiro de negócios'
+                    ] %}
+                    {% elif session['origem'] == 'compras_10_01_2025' %}
+                    {% set colunas_ordem = [
+                        '#', 'Nº do documento', 'Tipo de documento', 'Nº do item', 'Descrição do item/serviço', 'Quantidade',
+                        'Preço', 'Data de lançamento', 'Nome do cliente/fornecedor', 'Código do cliente/fornecedor'
+                        ] %}
+                        {% elif session['origem'] == 'compras_16_01_2025' %}
+                        {% set colunas_ordem = [
+                            'Nº do item', 'Descrição do item/serviço', 'Quantidade', 'Moeda do preço', 'Preço', 'Total da linha', 
+                            'Nº do documento', 'Tipo de documento', 'Data de lançamento', 'Data de vencimento', 'Linha da data de entrega',
+                            'Código do cliente/fornecedor', 'Nome do cliente/fornecedor', 'Observações', 'Forma de pagamento', 
+                            'Código da condição de pagamento', 'CNPJ'
+                            ] %}
+                            {% elif session['origem'] == 'numero_serie' %}
+                            {% set colunas_ordem = [
+                                '#', 'Código do parceiro de negócios', 'Nome do parceiro de negócios', 'Cliente direto',
+                                'Nome do cliente direto', 'Nº de série do fabricante', 'Nº de série', 'Nº do item', 'Descrição do item', 
+                                'Nº da entrega', 'Nº da nota fiscal', 'Data de entrega', 'Telefone de contato', 'Rua', 'Bairro', 'CEP',
+                                'Cidade', 'Município', 'País/região', 'Estado', 'Tipo de logradouro', 'Rua nº'
+                                ] %}
+                    {% endif %}
+                    
+                    
+                    {% for col in colunas_ordem %}
+                    <th>{{ col }}</th>
                     {% endfor %}
-                </tbody>
-            </table>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in cliente_info %}
+                <tr>
+                    {% for col in colunas_ordem %}
+                    <td>{{ row[col] }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>Nenhum dado encontrado para exibir.</p>
         {% endif %}
     </div>
 
