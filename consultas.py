@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 import pandas as pd
 
-app = Flask(__name__)
+app = Flask(__name__) 
 
 # Carregar o DataFrame de exemplo (substitua com o seu arquivo CSV)
 dados_df = pd.read_csv('./analise-vendas.csv')
@@ -28,8 +28,21 @@ def consulta():
                 except ValueError:
                     return f"O valor para '{campo}' deve ser numérico."
             
+            if campo in '% de lucro bruto':
+                try:
+                    valor = float(valor)
+                except ValueError:
+                    return f"O valor para {campo} deve ser decimal"
+                
+            if campo in ['Total de Nota Fiscal de Saída', 'Lucro bruto', 'Total de NS em aberto']:
+                try:
+                    valor = float(valor)
+                    dados_df[campo] = dados_df[campo].replace({r'R\$ ': '', r'\.': '', ',': '.'}, regex=True).astype(float)
+                except ValueError:
+                    print(f"O valor deve ser decimal")
+
             # Filtrar os dados
-            cliente_info = dados_df[dados_df[campo] == valor]
+            cliente_info = dados_df[dados_df[campo] == valor] # Retorna o valor de todos os campos
             if not cliente_info.empty:
                 return render_template('resultado.html', cliente_info=cliente_info)
             else:
@@ -39,5 +52,6 @@ def consulta():
 
     return render_template('consulta.html')
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == '__main__': # é usada para garantir que um trecho de código seja executado apenas quando o script for executado diretamente, e não quando ele for importado como um módulo em outro script 
+    app.run(host='0.0.0.0', port=5000, debug=True)
+
